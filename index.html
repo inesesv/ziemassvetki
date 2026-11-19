@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ziemassvētku gaidīšana</title>
+<meta name="color-scheme" content="dark">
+<style>
+:root{--bg:#0d1b2e;--bg2:#16304d;--ink:#f6efe0;--dim:#a9b8c9;--gold:#f2b84b;--flame:#ffd98a;--pine:#2f6b52;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden}
+body{background:radial-gradient(120% 90% at 20% 10%,var(--bg2),var(--bg) 70%);color:var(--ink);
+ font-family:"Fraunces",Georgia,"Times New Roman",serif;font-size:1.1vw}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+main{position:relative;height:100%;display:grid;grid-template-columns:36% 1fr;gap:3vw;padding:3.5vw 4vw 7vw}
+.left{display:flex;flex-direction:column;justify-content:flex-start;gap:3.5vw}
+#branch{margin-top:-6.5vw;position:relative}#branch svg{width:100%;height:auto;display:block}
+.count small{display:block;font-size:2.4em;color:var(--dim)}
+.count b{display:block;font-size:12em;line-height:.95;color:var(--gold);font-weight:700;letter-spacing:-.03em}
+.count span{font-size:3em}
+.candles{display:flex;gap:2.2vw;align-items:flex-end;justify-content:center;height:11vw}
+.c{width:3.2vw;position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.c i{display:block;width:100%;border-radius:.3vw .3vw 0 0;background:linear-gradient(90deg,#c9c1ae,#f6efe0 50%,#bdb5a2)}
+.c u{position:absolute;top:0;width:1.1vw;height:2vw;border-radius:50% 50% 50% 50%/65% 65% 35% 35%;background:radial-gradient(#fff6d6,var(--flame) 45%,#e8862c);
+ box-shadow:0 0 2.5vw .8vw rgba(255,190,80,.55);animation:fl 1.6s ease-in-out infinite alternate;opacity:0}
+.c.on u{opacity:1}
+.c.off i{opacity:.45}
+.c em{position:absolute;bottom:-3vw;font-style:normal;font-size:1.5em;color:var(--dim);white-space:nowrap}
+@keyframes fl{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.12,1.2) rotate(3deg)}}
+.stage{position:relative;border-left:.25vw solid var(--gold);padding-left:3.5vw;display:flex;align-items:center}
+.slide{position:absolute;inset:0 0 0 3.5vw;display:flex;flex-direction:column;justify-content:center;gap:1.6vw;opacity:0;transition:opacity 1.2s}
+.slide.show{opacity:1}
+.slide h2{font-size:3em;color:var(--gold);font-weight:600}
+.slide p{font-size:4.6em;line-height:1.2;max-width:34em}
+.slide ul{list-style:none;display:grid;gap:1.4vw}
+.slide li{font-size:3.6em;display:flex;gap:2vw;align-items:baseline}
+.slide li b{color:var(--gold);min-width:5.2em;font-weight:600}
+.slide .by{font-size:2.6em;color:var(--dim)}
+.bar{position:fixed;left:0;right:0;bottom:0;height:5vw;background:var(--pine);display:flex;align-items:center;padding:0 4vw;font-size:2.4em;gap:2vw;white-space:nowrap;overflow:hidden}
+.bar b{color:var(--flame)}
+.bar img{margin-left:auto;height:3.2vw;width:auto}
+@media (max-aspect-ratio:1/1){body{font-size:2.2vw}main{grid-template-columns:1fr;padding-bottom:12vw}.stage{border-left:0;padding-left:0}.slide{inset:0}.count b{font-size:12em}}
+@media (prefers-reduced-motion:reduce){.c u{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="snow" aria-hidden="true"></canvas>
+<main>
+ <section class="left">
+  <div class="count" id="count"></div>
+  <div class="candles" id="candles" aria-label="Adventes svecītes"></div>
+  <div id="branch" aria-hidden="true"></div>
+ </section>
+ <section class="stage" id="stage"></section>
+</main>
+<div class="bar"><span id="bar" style="overflow:hidden;text-overflow:ellipsis"></span><img alt="Zinātkāre" src="data:image/png;base64,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"></div>
+
+<script>
+/* ===== REDIĢĒJIET ŠEIT ===== */
+var YEAR = new Date().getFullYear();
+var SLIDE_SECONDS = 14;
+
+// Skolas pasākumi: [mēnesis, diena, laiks, nosaukums]. Šie ir PIEMĒRI — nomainiet uz saviem.
+var EVENTS = [
+ [12, 4, "pl. 15:00", "Ziemassvētku tirdziņš skolas vestibilā"],
+ [12, 11, "pl. 17:30", "Vidusskolas Ziemassvētku koncerts"],
+ [12, 15, "pl. 12:00", "Pamatskolas klašu eglīšu svētki"],
+ [12, 18, "pl. 11:00", "Durvju dekorēšanas konkursa rezultāti"],
+ [12, 19, "pl. 12:30", "Pēdējā mācību diena, klašu vakari"]
+];
+
+// Dienas labie darbi (mainās katru dienu)
+var DEEDS = [
+ "Pasaki paldies kādam, kas to negaida.",
+ "Uzraksti sveicienu klasesbiedram.",
+ "Palīdzi kādam nest somu vai grāmatas.",
+ "Pasmaidi pirmajam, ko sastopi koridorā.",
+ "Pasaki skolotājam vai tehniskajam darbiniekam labu vārdu.",
+ "Uzaicini vienu, kas bieži sēž viens, pievienoties tev.",
+ "Sakārto savu klases vietu un vēl vienu papildus.",
+ "Piezvani vai uzraksti vecvecākiem.",
+ "Nodziedi klasē Ziemassvētku dziesmu.",
+ "Uzzīmē apsveikuma kartīti un uzdāvini."
+];
+
+var FACTS = [
+ ["Egle Rīgā", "Pirmā dekorētā Ziemassvētku egle pasaulē, pēc rakstītajiem avotiem, tika uzstādīta Rīgas Rātslaukumā 1510. gadā."],
+ ["Ķekatas", "Ziemas saulgriežu laikā ķekatnieki iet no mājas uz māju, dzied, dejo un nes labas veiksmes vēlējumus."],
+ ["Bluķa vilkšana", "Senā tradīcija: lielu bluķi velk pa sādžu, lai aizvilktu projām visu sliktoko un ienestu gaismu."],
+ ["Ziemassvētku galds", "Latvijā tradicionāli galdā liek pelēkos zirņus ar speķi, pīrāgus, piparkūkas un kāpostus."],
+ ["Piparkūkas", "Piparkūku mīklu gatavo ar medu un garšvielām, un ļoti bieži to cep un rotā kopā ar ģimeni vai klasi."],
+ ["Adventes vainags", "Četras svecītes iedeg pa vienai katru svētdienu pirms Ziemassvētkiem, un gaisma kļūst arvien lielāka."]
+];
+
+var QUOTES = [
+ ["Mazs labais darbs ir lielāks par lielu nodomu.", "Latviešu paruna"],
+ ["Gaisma nekļūst mazāka, ja ar to dalās.", "Tautas gudrība"],
+ ["Lai katra diena ir kā maza dāvana.", "Skolas sveiciens"]
+];
+/* ===== BEIGAS ===== */
+
+var MONTHS=["janvāris","februāris","marts","aprīlis","maijs","jūnijs","jūlijs","augusts","septembris","oktobris","novembris","decembris"];
+function day0(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function plural(n){var l=n%10,t=n%100;return (l===1&&t!==11)?"diena":"dienas"}
+function ending(n){var l=n%10,t=n%100;return (l===1&&t!==11)?"atlikusi":"atlikušas"}
+function dayOfYear(d){return Math.floor((day0(d)-new Date(d.getFullYear(),0,0))/864e5)}
+
+function advents(){ // Adventes svētdienas: 4 svētdienas pirms 25. dec. (ieskaitot tuvāko pirms 24. dec.)
+ var x=new Date(YEAR,11,24), dow=x.getDay(), s4=new Date(YEAR,11,24-(dow===0?7:dow)+ (dow===0?0:0));
+ if(dow===0) s4=new Date(YEAR,11,24);
+ else s4=new Date(YEAR,11,24-dow);
+ var r=[]; for(var i=3;i>=0;i--) r.push(new Date(s4.getFullYear(),s4.getMonth(),s4.getDate()-7*i)); return r;
+}
+
+function draw(){
+ var now=new Date(), today=day0(now), xmas=new Date(YEAR,11,24);
+ var n=Math.round((xmas-today)/864e5), c=document.getElementById("count");
+ if(n>0) c.innerHTML="<small>Līdz Ziemassvētkiem "+ending(n)+"</small><b>"+n+"</b><span>"+plural(n)+"</span>";
+ else if(n===0) c.innerHTML="<small>Šodien ir</small><b style='font-size:8em'>Ziemassvētku vakars</b>";
+ else c.innerHTML="<small>Skaistus svētkus!</small><b style='font-size:8em'>Priecīgus Ziemassvētkus</b>";
+ var a=advents(), h="";
+ a.forEach(function(d,i){
+  var on=d<=today, hgt=(5+i*1.2)+"vw";
+  h+='<div class="c '+(on?"on":"off")+'"><u></u><i style="height:'+hgt+'"></i></div>';
+ });
+ document.getElementById("candles").innerHTML=h;
+}
+
+function upcoming(){
+ var today=day0(new Date());
+ return EVENTS.map(function(e){return {d:new Date(YEAR,e[0]-1,e[1]),t:e[2],n:e[3]}})
+  .filter(function(e){return e.d>=today}).sort(function(a,b){return a.d-b.d});
+}
+function label(d){return d.getDate()+". "+MONTHS[d.getMonth()].slice(0,3)+"."}
+
+function buildSlides(){
+ var now=new Date(), s=[], u=upcoming();
+ s.push('<h2>Dienas labais darbs</h2><p>'+DEEDS[dayOfYear(now)%DEEDS.length]+'</p>');
+ if(u.length) s.push('<h2>Tuvākie pasākumi</h2><ul>'+u.slice(0,4).map(function(e){return '<li><b>'+label(e.d)+'</b><span>'+e.n+' <i style="color:var(--dim)">'+e.t+'</i></span></li>'}).join("")+'</ul>');
+ var f=FACTS[dayOfYear(now)%FACTS.length];
+ s.push('<h2>'+f[0]+'</h2><p>'+f[1]+'</p>');
+ var q=QUOTES[dayOfYear(now)%QUOTES.length];
+ s.push('<h2>Domu grauds</h2><p>“'+q[0]+'”</p><div class="by">'+q[1]+'</div>');
+ var f2=FACTS[(dayOfYear(now)+3)%FACTS.length];
+ s.push('<h2>'+f2[0]+'</h2><p>'+f2[1]+'</p>');
+ s.push('<h2>Klašu konkurss</h2><p>Nofotografē savas klases dekorētās durvis un nosūti skolotājai. Balsojums notiks pēdējā nedēļā.</p>');
+ return s;
+}
+
+var idx=0, els=[];
+function mount(){
+ var st=document.getElementById("stage"); st.innerHTML=""; els=[];
+ buildSlides().forEach(function(h){var d=document.createElement("div");d.className="slide";d.innerHTML=h;st.appendChild(d);els.push(d)});
+ idx=0; els[0].classList.add("show");
+}
+function next(){
+ els[idx].classList.remove("show"); idx=(idx+1)%els.length; els[idx].classList.add("show");
+}
+
+function bar(){
+ var u=upcoming(), b=document.getElementById("bar");
+ b.innerHTML=u.length?"<b>Nākamais:</b> "+label(u[0].d)+", "+u[0].t+" — "+u[0].n:"<b>Priecīgus svētkus!</b> Gaišu un mierīgu laiku visiem.";
+}
+
+/* sniegs */
+var cv=document.getElementById("snow"), cx=cv.getContext("2d"), fl=[];
+function size(){cv.width=innerWidth;cv.height=innerHeight}
+function initSnow(){size();fl=[];var n=Math.round(innerWidth/14);for(var i=0;i<n;i++)fl.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:1+Math.random()*3,v:.4+Math.random()*.9,p:Math.random()*6})}
+function snow(){
+ cx.clearRect(0,0,cv.width,cv.height); cx.fillStyle="rgba(255,255,255,.75)";
+ fl.forEach(function(f){f.y+=f.v;f.p+=.01;f.x+=Math.sin(f.p)*.4;if(f.y>cv.height){f.y=-5;f.x=Math.random()*cv.width}
+  cx.beginPath();cx.arc(f.x,f.y,f.r,0,6.3);cx.fill()});
+ requestAnimationFrame(snow);
+}
+addEventListener("resize",initSnow);
+
+function branch(){
+ var W=600,H=170,seed=11;function r(){seed=(seed*9301+49297)%233280;return seed/233280}
+ var col=["#173d2f","#1f4f3c","#2b6249","#3a7d5f"],P,S,F;
+ function reset(){P=["","","",""];S="";F=""}
+ function f(n){return n.toFixed(1)}
+ function twig(x,y,a,len,sz,pal){
+  var cx=x,cy=y,ca=a;
+  for(var s=3;s<len;s+=3){
+   ca+=(r()-.5)*.07+(a<0?.012:-.012);cx+=Math.cos(ca)*3;cy+=Math.sin(ca)*3;
+   var t=s/len,nl=(1-t*.72)*sz*(.8+r()*.4);
+   [-1,1].forEach(function(d){
+    var na=ca+d*(.7+r()*.35),ex=cx+Math.cos(na)*nl,ey=cy+Math.sin(na)*nl,k=Math.min(3,pal+Math.floor(r()*3));
+    P[k]+="M"+f(cx)+" "+f(cy)+"L"+f(ex)+" "+f(ey);
+    if(t>.5&&r()<.3)F+="M"+f(cx+Math.cos(na)*nl*.4)+" "+f(cy+Math.sin(na)*nl*.4)+"L"+f(ex)+" "+f(ey);
+   });
+  }
+  S+="M"+f(x)+" "+f(y)+"L"+f(cx)+" "+f(cy);
+ }
+ function limb(y0,amp,pal,sz,n,lenMax){
+  reset();var main="",x,y,t;
+  for(var i=0;i<=n;i++){t=i/n;x=12+t*576;y=y0-amp*Math.sin(t*Math.PI)+Math.sin(t*9)*2;main+=(i?"L":"M")+f(x)+" "+f(y);
+   if(i>0&&i<n){var e=.5+.5*Math.sin(t*Math.PI),a=(i%2?-1:1)*(.95+r()*.3)-.05;twig(x,y,a,(lenMax*.55+r()*lenMax*.45)*e,sz,pal)}}
+  twig(588,y,.05,38,sz,pal);
+  var o='<path d="'+main+'" fill="none" stroke="#4a3322" stroke-width="3.6" stroke-linecap="round"/><path d="'+S+'" fill="none" stroke="#4a3322" stroke-width="1.6" stroke-linecap="round"/>';
+  for(var k=0;k<4;k++)if(P[k])o+='<path d="'+P[k]+'" stroke="'+col[k]+'" stroke-width="1.7" stroke-linecap="round" fill="none"/>';
+  return o+'<path d="'+F+'" stroke="#e6f0ec" stroke-opacity=".55" stroke-width="1.4" stroke-linecap="round" fill="none"/>';
+ }
+ function cone(x,y,rot){
+  var o='<g transform="translate('+x+' '+y+') rotate('+rot+')"><path d="M0 0L0 6" stroke="#4a3322" stroke-width="1.5"/><ellipse cx="0" cy="19" rx="8" ry="14" fill="#5e4029"/>';
+  for(var j=0;j<6;j++)o+='<path d="M-7 '+(10+j*4.4)+'Q0 '+(15+j*4.4)+' 7 '+(10+j*4.4)+'" fill="none" stroke="#8c6a45" stroke-width="1.5"/>';
+  return o+'</g>';
+ }
+ var o=limb(114,8,0,11,22,50)+limb(92,12,1,12,24,46);
+ o+=cone(205,98,6)+cone(440,92,-8);
+ [[326,86],[333,91],[321,92],[330,98],[338,84]].forEach(function(b){o+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="3.4" fill="#c8453b"/><circle cx="'+(b[0]-1)+'" cy="'+(b[1]-1)+'" r="1" fill="#fff" opacity=".5"/>'});
+ document.getElementById("branch").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+o+'</svg>';
+}
+draw();mount();bar();branch();initSnow();
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches) snow();
+setInterval(next,SLIDE_SECONDS*1000);
+setInterval(function(){draw();bar();},60000);
+setInterval(function(){location.reload()},6*3600*1000); // dienas maiņai
+</script>
+</body>
+</html>
