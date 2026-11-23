@@ -33,12 +33,13 @@ main{position:relative;height:100%;display:grid;grid-template-columns:36% 1fr;ga
 .slide{position:absolute;inset:0 0 0 3.5vw;display:flex;flex-direction:column;justify-content:center;gap:1.6vw;opacity:0;transition:opacity 1.2s}
 .slide.show{opacity:1}
 .slide h2{font-size:3em;color:var(--gold);font-weight:600}
-.slide p{font-size:3em;line-height:1.2;max-width:34em}
+.slide p{font-size:3.5em;line-height:1.25;max-width:40em}
 .slide ul{list-style:none;display:grid;gap:1.4vw}
-.slide li{font-size:3em;display:flex;gap:2vw;align-items:baseline}
+.slide li{font-size:3.6em;display:flex;gap:2vw;align-items:baseline}
 .slide li b{color:var(--gold);min-width:5.2em;font-weight:600}
 .slide .by{font-size:2.6em;color:var(--dim)}
-.bar{position:fixed;left:0;right:0;bottom:0;height:5vw;background:#0b2447;display:flex;align-items:center;padding:0 4vw;font-size:2em;gap:2vw;white-space:nowrap;overflow:hidden}
+.slide h2.al{color:#0d1b2e;background:var(--flame);align-self:flex-start;padding:.5vw 1.8vw;border-radius:.7vw;font-size:3.4em;font-weight:700}
+.bar{position:fixed;left:0;right:0;bottom:0;height:5vw;background:#0b2447;border-top:.15vw solid rgba(242,184,75,.45);display:flex;align-items:center;padding:0 4vw;font-size:2.4em;gap:2vw;white-space:nowrap;overflow:hidden}
 .bar b{color:var(--flame)}
 .bar img{margin-left:auto;height:3.2vw;width:auto}
 @media (max-aspect-ratio:1/1){body{font-size:2.2vw}main{grid-template-columns:1fr;padding-bottom:12vw}.stage{border-left:0;padding-left:0}.slide{inset:0}.count b{font-size:12em}}
@@ -60,13 +61,14 @@ main{position:relative;height:100%;display:grid;grid-template-columns:36% 1fr;ga
 <script>
 /* ===== REDIĢĒJIET ŠEIT ===== */
 var YEAR = new Date().getFullYear();
-var SLIDE_SECONDS = 30;
+var SLIDE_SECONDS = 14;
 var CITY = {name:"Liepāja", lat:56.51, lon:21.01};
 
 // Skolas pasākumi: [mēnesis, diena, laiks, nosaukums]. Šie ir PIEMĒRI — nomainiet uz saviem.
 var EVENTS = [
- [11, 24, "pl. 18:00", "Skolas egles atklāšana, Ziemassvētku tirdziņš skolas vestibilā, darbnīcas"],
- [12, 17, "pl. 11:00", "Vidusskolas balle"],
+ [11, 24, "pl. 18:00", "Egles iedegšana, darbnīcas, Ziemassvētku tirdziņš skolas vestibilā"],
+ [12, 17, "pl. 17:30", "Vidusskolas Ziemassvētku balle],
+ [12, 15, "pl. 12:00", "Pamatskolas klašu eglīšu svētki"],
  [12, 18, "pl. 12:30", "Pēdējā mācību diena"]
 ];
 
@@ -108,14 +110,14 @@ var FACTS = [
 var GREETS = [
  "Sveiciens visiem skolēniem un skolotājiem: sākam gaišo Adventes laiku!",
  "Labrīt, skola! Šodien mums visiem ir iemesls pasmaidīt.",
- "Sveiciens skolas klašu pulkam: jūs esat mūsu skolas gaisma!",
- "Sveiciens visiem: paldies par jūsu enerģiju un idejām!",
+ "Sveiciens sākumskolas klašu pulkam: jūs esat mūsu skolas gaisma!",
+ "Sveiciens vecākajām klasēm: paldies par jūsu enerģiju un idejām!",
  "Sveicam visus, kas šodien mācās ar prieku!",
  "Siltu sveicienu mūsu skolotājiem un darbiniekiem!",
  "Šodien iedegam pirmo Adventes svecīti. Lai gaisma ir ikvienā sirdī!",
  "Sveiciens visiem, kas šodien cep piparkūkas mājās!",
  "Sveicam visus, kuriem šodien ir kāds liels mērķis!",
- "Sveiciens ēdnīcas un tehniskajiem darbiniekiem: jūs esat superīgi!",
+ "Sveiciens ēdnīcas, sporta zāles un tehniskajiem darbiniekiem: jūs esat superīgi!",
  "Sveiciens visiem, kas steidzas, lai paspētu uz stundu!",
  "Lai šī nedēļa ir gaiša kā Adventes svecītes!",
  "Sveiciens ikvienam, kurš šodien palīdzēja citam!",
@@ -297,6 +299,11 @@ function buildSlides(){
  s.push(sl("Novēlējums šai dienai",WISHES[i]));
  s.push(sl("Dienas labais darbs",DEEDS[i]));
  if(u.length) s.push('<h2>Tuvākie pasākumi</h2><ul>'+u.slice(0,4).map(function(e){return '<li><b>'+label(e.d)+'</b><span>'+e.n+' <i style="color:var(--dim)">'+e.t+'</i></span></li>'}).join("")+'</ul>');
+ var td=day0(new Date()),tm=day0(new Date(td.getTime()+90000000));
+ u.filter(function(e){return e.d-td===0||e.d-tm===0}).reverse().forEach(function(e){
+  var a='<h2 class="al">'+(e.d-td===0?'ŠODIEN':'RĪT')+' skolā</h2><p>'+e.n+'</p><div class="by">'+label(e.d)+', '+e.t+'</div>';
+  s.splice(Math.min(5,s.length),0,a);s.splice(1,0,a);
+ });
  return s;
 }
 function loadWx(){
