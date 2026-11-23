@@ -61,43 +61,188 @@ main{position:relative;height:100%;display:grid;grid-template-columns:36% 1fr;ga
 /* ===== REDIĢĒJIET ŠEIT ===== */
 var YEAR = new Date().getFullYear();
 var SLIDE_SECONDS = 14;
+var CITY = {name:"Liepāja", lat:56.51, lon:21.01};
 
 // Skolas pasākumi: [mēnesis, diena, laiks, nosaukums]. Šie ir PIEMĒRI — nomainiet uz saviem.
 var EVENTS = [
- [12, 4, "pl. 15:00", "Ziemassvētku tirdziņš skolas vestibilā"],
- [12, 11, "pl. 17:30", "Vidusskolas Ziemassvētku koncerts"],
- [12, 15, "pl. 12:00", "Pamatskolas klašu eglīšu svētki"],
- [12, 18, "pl. 11:00", "Durvju dekorēšanas konkursa rezultāti"],
- [12, 19, "pl. 12:30", "Pēdējā mācību diena, klašu vakari"]
+ [11, 24, "pl. 18:00", "Skolas egles atklāšana, Ziemassvētku tirdziņš skolas vestibilā, darbnīcas"],
+ [12, 16, "pl. 12:00", "Pamatskolas klašu eglīšu svētki"],
+ [12, 17, "pl. 11:00", "Vidusskolas balle"],
+ [12, 18, "pl. 12:30", "Pēdējā mācību diena"]
 ];
 
-// Dienas labie darbi (mainās katru dienu)
+// Saturs mainās katru dienu no 23. novembra līdz 24. decembrim (32 dienas) un neatkārtojas.
+var FACTS = [
+ "Rīga uzskata, ka 1510. gadā Rātslaukumā tika rotāta viena no pirmajām svētku eglēm pasaulē.",
+ "Ziemassvētki latviešiem ir cieši saistīti ar ziemas saulgriežiem, kad diena sāk kļūt garāka.",
+ "Ķekatnieki maskās staigā pa sētām, dzied un dejo, lai mājās ienestu veiksmi.",
+ "Bluķa vilkšana simbolizē vecā gada nelaimju aizvilkšanu projām.",
+ "Latviešu svētku galdā tradicionāli ir pelēkie zirņi ar speķi, kāposti un pīrāgi.",
+ "Piparkūku mīklā liek medu un garšvielas: ingveru, kanēli un krustnagliņas.",
+ "Adventes vainagam ir četras svecītes, vienu iedeg katrā svētdienā pirms Ziemassvētkiem.",
+ "Vārds “advents” nāk no latīņu valodas un nozīmē “atnākšana”.",
+ "Pirmais adventes vainags tika darināts 19. gadsimtā Vācijā.",
+ "Parastā egle ir viena no visbiežāk sastopamajām koku sugām Latvijas mežos.",
+ "Salmu zvaigznes un rotājumi ir viena no senākajām eglītes rotām.",
+ "Ap 21. decembri Ziemeļu puslodē ir gada garākā nakts.",
+ "Latvijā Ziemassvētku brīvdienas ir 24., 25. un 26. decembris.",
+ "“Klusa nakts, svēta nakts” pirmoreiz tika nodziedāta 1818. gadā Austrijā.",
+ "Sniegpārsla parasti veidojas ar sešiem stariem, jo tāda ir ūdens kristāla uzbūve.",
+ "Speķa pīrādziņi ir viens no latviešu svētku galda simboliem.",
+ "Pirmā Ziemassvētku apsveikuma kartīte tika nosūtīta 1843. gadā Londonā.",
+ "Pirmās elektriskās eglītes lampiņas parādījās 1882. gadā Ņujorkā.",
+ "Rūdolfs, sarkanpurna ziemeļbriedis, tika izdomāts 1939. gadā grāmatiņai bērniem.",
+ "Čaikovska baleta “Riekstkodis” pirmizrāde notika 1892. gadā Sanktpēterburgā.",
+ "Decembrī Latvijā diena ir tikai ap sešām stundām gara.",
+ "Ziemeļbrieži ir vienīgie brieži, kuriem ragi ir gan tēviņiem, gan mātītēm.",
+ "Ziemassvētku zvaigzne jeb puansetija nāk no Meksikas.",
+ "Kopš 1947. gada Norvēģija katru gadu uzdāvina egli Londonas Trafalgāra laukumam.",
+ "“Jingle Bells” bija pirmā dziesma, kas 1965. gadā atskanēja no kosmosa.",
+ "Latviešu tradīcijā svētku laiks ilgst līdz Zvaigznes dienai, 6. janvārim.",
+ "Egļu skujas satur daudz C vitamīna, un no tām var vārīt tēju.",
+ "Piparkūku mājiņu cepšanas tradīcija izplatījās no Vācijas, un tā patīk bērniem vēl šodien.",
+ "Latvijas mežs klāj apmēram pusi valsts teritorijas.",
+ "Vecvecāki bieži atceras, ka egli agrāk rotāja ar āboliem, riekstiem un svecītēm.",
+ "Egle ir zaļa arī ziemā, tāpēc tā jau sen ir dzīvības un cerības simbols.",
+ "Ziemassvētku laiks ir laiks, kad cilvēki dāvina viens otram uzmanību un laiku."
+];
+var GREETS = [
+ "Sveiciens visiem skolēniem un skolotājiem: sākam gaišo Adventes laiku!",
+ "Labrīt, skola! Šodien mums visiem ir iemesls pasmaidīt.",
+ "Sveiciens sākumskolas klašu pulkam: jūs esat mūsu skolas gaisma!",
+ "Sveiciens vecākajām klasēm: paldies par jūsu enerģiju un idejām!",
+ "Sveicam visus, kas šodien mācās ar prieku!",
+ "Siltu sveicienu mūsu skolotājiem un darbiniekiem!",
+ "Šodien iedegam pirmo Adventes svecīti. Lai gaisma ir ikvienā sirdī!",
+ "Sveiciens visiem, kas šodien cep piparkūkas mājās!",
+ "Sveicam visus, kuriem šodien ir kāds liels mērķis!",
+ "Sveiciens ēdnīcas, sporta zāles un tehniskajiem darbiniekiem: jūs esat superīgi!",
+ "Sveiciens visiem, kas steidzas, lai paspētu uz stundu!",
+ "Lai šī nedēļa ir gaiša kā Adventes svecītes!",
+ "Sveiciens ikvienam, kurš šodien palīdzēja citam!",
+ "Šodien deg otrā Adventes svecīte. Sveiciens visiem klusuma un miera meklētājiem!",
+ "Sveicam bibliotēkas lasītājus: labākās grāmatas jūs jau gaida!",
+ "Sveiciens skolas korim un ansambļiem, kas gatavojas koncertiem!",
+ "Sveiciens visiem, kam šodien ir dzimšanas diena!",
+ "Sveicam skolas sporta komandas un treneru!",
+ "Sveiciens visiem, kas gatavo svētku pasākumus!",
+ "Sveiciens tiem, kas klusi dara labus darbus!",
+ "Šodien deg trešā Adventes svecīte. Sveiciens ģimenēm, kas gatavojas svētkiem!",
+ "Sveicam visus, kas šodien uzdrošinājās izmēģināt ko jaunu!",
+ "Sveiciens klašu audzinātājiem: paldies, ka esat blakus!",
+ "Sveiciens vecākiem, vecvecākiem un visiem, kas mūs atbalsta!",
+ "Sveiciens skolas padomei un klašu pārstāvjiem!",
+ "Sveicam visus, kas šodien palīdz noformēt skolu svētkiem!",
+ "Sveiciens visiem, kas gaida brīvdienas, tikai vēl mazliet!",
+ "Šodien deg ceturtā Adventes svecīte. Svētki ir pavisam tuvu!",
+ "Ziemas saulgrieži: tumsa sāk atkāpties, un dienas kļūs garākas!",
+ "Sveiciens visiem, kas šodien dosies ciemos pie tuviniekiem!",
+ "Sveiciens ikvienam, kurš šodien nes svētku prieku citiem!",
+ "Priecīgus Ziemassvētkus visai skolas saimei!"
+];
+var SONGS = [
+ "“Klusa nakts, svēta nakts” (tradicionālā)",
+ "“Jingle Bells” (tradicionālā)",
+ "“Last Christmas”, Wham!",
+ "“All I Want for Christmas Is You”, Mariah Carey",
+ "“White Christmas”, Bing Crosby",
+ "“Let It Snow!”, Dean Martin",
+ "“Happy Xmas (War Is Over)”, John Lennon un Yoko Ono",
+ "“Driving Home for Christmas”, Chris Rea",
+ "“Rockin’ Around the Christmas Tree”, Brenda Lee",
+ "“Sleigh Ride”, Leroy Anderson",
+ "“Sugar Plum Fairy deja”, Čaikovskis",
+ "“Carol of the Bells”, Mikola Leontovičs",
+ "“Winter Wonderland” (dažādu izpildītāju versijas)",
+ "“Do They Know It’s Christmas?”, Band Aid",
+ "“Feliz Navidad”, José Feliciano",
+ "“Merry Christmas Everyone”, Shakin’ Stevens"
+];
+var QUOTES = [
+ "Mazs labs darbs ir lielāks par lielu nodomu.",
+ "Gaisma nekļūst mazāka, ja ar to dalās.",
+ "Kas dod, tam atdodas.",
+ "Gaidīšana ir daļa no prieka.",
+ "Labs vārds uzsilda ilgāk nekā krāsns.",
+ "Katra diena ir jauns sākums.",
+ "Mierīgi un pamazām tiek tālāk nekā steidzoties.",
+ "Draugs ir tas, kas ieraugā, kad tev ir grūti.",
+ "Neviena tumsa nav mūžīga, vienmēr atnāk rīts.",
+ "Mazas lietas rada lielus svētkus.",
+ "Paldies ir vārds, kas nekad nav lieks.",
+ "Kopā var izdarīt vairāk nekā vienam pašam.",
+ "Ziema ir laiks, kad sirds kļūst mājīgāka.",
+ "Dāvana nav tas, kas ietīts, bet tas, ar kādu sirdi dots.",
+ "Solis pa solim var nonākt jebkur.",
+ "Ko iesēj, to pļauj, tāpēc iesēj labu!"
+];
+var WISHES = [
+ "Lai šodien tev izdodas viss, ko esi iecerējis!",
+ "Lai klasē skan smiekli un labi vārdi!",
+ "Lai tev ir kāds mierīgs brīdis starp darbiem!",
+ "Lai nākamais kontroldarbs sokas viegli!",
+ "Lai tev blakus ir cilvēks, kuram uzticēties!",
+ "Lai mājās tevi gaida silta tēja un labi vārdi!",
+ "Lai tev netrūkst drosmes pajautāt, ja kaut kas nav skaidrs!",
+ "Lai šodien ieraugi kaut ko skaistu: sniegu, gaismu, smaidu!",
+ "Lai tev pietiek laika gan mācībām, gan atpūtai!",
+ "Lai šodien katra stunda paiet interesanti!",
+ "Lai tev ir spēks piedot un palūgt piedošanu!",
+ "Lai sniegs tev atnes prieku!",
+ "Lai šodien saņem nelielu, bet patiesu paldies!",
+ "Lai tavs rīts sākas ar labu garastāvokli!",
+ "Lai piepildās kāda tava maza vēlēšanās!",
+ "Lai draudzība klasē kļūst vēl stiprāka!",
+ "Lai svētku gaidīšana ir tikpat jauka kā pati svētku diena!",
+ "Lai tev ir labas domas un silti apavi!",
+ "Lai vakarā ģimene sanāk kopā pie galda!",
+ "Lai tev netrūkst enerģijas arī tumšajos vakaros!",
+ "Lai šodien tev izdodas kādu iepriecināt!",
+ "Lai miers un klusums pavada tavu ceļu mājās!",
+ "Lai tev ir drosme sākt ko jaunu!",
+ "Lai uz tava ceļa vienmēr deg kāda gaisma!",
+ "Lai tev ir laiks pastaigai un svaigam gaisam!",
+ "Lai tev netrūkst piparkūku un labu sarunu!",
+ "Lai tava sirds šodien ir viegla!",
+ "Lai šī diena atnes kaut ko negaidīti labu!",
+ "Lai garākā nakts tev dod mierīgu miegu!",
+ "Lai šodien tev ir iemesls pateikt “paldies”!",
+ "Lai svētki atnes mieru ikvienai mājai!",
+ "Lai Ziemassvētki tev ir gaiši un silti!"
+];
 var DEEDS = [
  "Pasaki paldies kādam, kas to negaida.",
  "Uzraksti sveicienu klasesbiedram.",
  "Palīdzi kādam nest somu vai grāmatas.",
  "Pasmaidi pirmajam, ko sastopi koridorā.",
  "Pasaki skolotājam vai tehniskajam darbiniekam labu vārdu.",
- "Uzaicini vienu, kas bieži sēž viens, pievienoties tev.",
+ "Uzaicini kādu, kas bieži sēž viens, pievienoties tev.",
  "Sakārto savu klases vietu un vēl vienu papildus.",
  "Piezvani vai uzraksti vecvecākiem.",
  "Nodziedi klasē Ziemassvētku dziesmu.",
- "Uzzīmē apsveikuma kartīti un uzdāvini."
-];
-
-var FACTS = [
- ["Egle Rīgā", "Pirmā dekorētā Ziemassvētku egle pasaulē, pēc rakstītajiem avotiem, tika uzstādīta Rīgas Rātslaukumā 1510. gadā."],
- ["Ķekatas", "Ziemas saulgriežu laikā ķekatnieki iet no mājas uz māju, dzied, dejo un nes labas veiksmes vēlējumus."],
- ["Bluķa vilkšana", "Senā tradīcija: lielu bluķi velk pa sādžu, lai aizvilktu projām visu sliktoko un ienestu gaismu."],
- ["Ziemassvētku galds", "Latvijā tradicionāli galdā liek pelēkos zirņus ar speķi, pīrāgus, piparkūkas un kāpostus."],
- ["Piparkūkas", "Piparkūku mīklu gatavo ar medu un garšvielām, un ļoti bieži to cep un rotā kopā ar ģimeni vai klasi."],
- ["Adventes vainags", "Četras svecītes iedeg pa vienai katru svētdienu pirms Ziemassvētkiem, un gaisma kļūst arvien lielāka."]
-];
-
-var QUOTES = [
- ["Mazs labais darbs ir lielāks par lielu nodomu.", "Latviešu paruna"],
- ["Gaisma nekļūst mazāka, ja ar to dalās.", "Tautas gudrība"],
- ["Lai katra diena ir kā maza dāvana.", "Skolas sveiciens"]
+ "Uzzīmē apsveikuma kartīti un uzdāvini.",
+ "Palīdzi sakopt klasi pēc stundas.",
+ "Pajautā klasesbiedram, kā viņam iet, un patiešām noklausies.",
+ "Atvainojies, ja esi kādu aizvainojis.",
+ "Pastāsti kaut ko labu par kādu citu.",
+ "Padalies ar uzkodu.",
+ "Palīdzi jaunākam skolēnam atrast kabinetu.",
+ "Izslēdz gaismu, kur tā nav vajadzīga.",
+ "Pastāsti mājiniekiem par savu dienu.",
+ "Uzraksti pateicības kartīti skolotājam.",
+ "Starpbrīdī pastaigā ar kādu, kam nav kompānijas.",
+ "Sakārto savu istabu bez atgādinājuma.",
+ "Palīdzi mājās uzklāt galdu.",
+ "Atstāj pozitīvu komentāru par kāda paveikto darbu.",
+ "Uzaicini klasesbiedru uz kopīgu spēli.",
+ "Nodziedi vai nosvilpo kādu svētku melodiju.",
+ "Palīdzi skolotājam aiznest mācību līdzekļus.",
+ "Atbalsti kādu, kam šodien kaut kas neizdodas.",
+ "Izdari kaut ko laipnu tā, lai neviens neredz.",
+ "Palaid kādu pirmo pa durvīm.",
+ "Pateicies ēdnīcas darbiniekiem.",
+ "Pasaki kādam, ko tajā novērtē.",
+ "Uzdāvini kādam mazu pašdarinātu dāvaniņu."
 ];
 /* ===== BEIGAS ===== */
 
@@ -135,18 +280,29 @@ function upcoming(){
 }
 function label(d){return d.getDate()+". "+MONTHS[d.getMonth()].slice(0,3)+"."}
 
+function dayIdx(){var s=new Date(YEAR,10,23),d=Math.round((day0(new Date())-s)/864e5);return Math.max(0,Math.min(31,d))}
+var WX=null;
+function deg(n){n=Math.round(n);return (n<0?"−":n>0?"+":"")+Math.abs(n)+"°"}
+function wxText(c){if(c===0)return"Skaidrs";if(c<=2)return"Mainīga mākoņainība";if(c===3)return"Apmācies";if(c<=48)return"Migla";if(c<=57)return"Smalks lietus";if(c<=67)return"Lietus";if(c<=77)return"Sniegs";if(c<=82)return"Lietusgāzes";if(c<=86)return"Sniega gāzes";return"Pērkona negaiss"}
+function sl(h,p,by){return '<h2>'+h+'</h2><p>'+p+'</p>'+(by?'<div class="by">'+by+'</div>':'')}
 function buildSlides(){
- var now=new Date(), s=[], u=upcoming();
- s.push('<h2>Dienas labais darbs</h2><p>'+DEEDS[dayOfYear(now)%DEEDS.length]+'</p>');
+ var i=dayIdx(), s=[], u=upcoming();
+ s.push(sl("Sveiciens",GREETS[i]));
+ s.push(sl("Dienas fakts",FACTS[i]));
+ if(i%2) s.push(sl("Dienas dziesma",SONGS[i>>1],"Noklausies pēc stundām vai nodziedi kopā klasē."));
+ else s.push(sl("Domu grauds","“"+QUOTES[i>>1]+"”"));
+ if(WX){
+  var t=new Date(day0(new Date()).getTime()+864e5+36e5),hint=WX.hi<=0?" · Uzvelc siltas drēbes un cepuri":(WX.p>.5?" · Neaizmirsti lietussargu":"");
+  s.push('<h2>Rītdienas laiks · '+label(t)+' · '+CITY.name+'</h2><p><span style="color:var(--gold);font-size:1.5em">'+deg(WX.hi)+' / '+deg(WX.lo)+'</span><br>'+wxText(WX.c)+'</p><div class="by">Vējš līdz '+Math.round(WX.w)+' m/s · nokrišņi '+WX.p.toFixed(1).replace(".",",")+' mm'+hint+'</div>');
+ }
+ s.push(sl("Novēlējums šai dienai",WISHES[i]));
+ s.push(sl("Dienas labais darbs",DEEDS[i]));
  if(u.length) s.push('<h2>Tuvākie pasākumi</h2><ul>'+u.slice(0,4).map(function(e){return '<li><b>'+label(e.d)+'</b><span>'+e.n+' <i style="color:var(--dim)">'+e.t+'</i></span></li>'}).join("")+'</ul>');
- var f=FACTS[dayOfYear(now)%FACTS.length];
- s.push('<h2>'+f[0]+'</h2><p>'+f[1]+'</p>');
- var q=QUOTES[dayOfYear(now)%QUOTES.length];
- s.push('<h2>Domu grauds</h2><p>“'+q[0]+'”</p><div class="by">'+q[1]+'</div>');
- var f2=FACTS[(dayOfYear(now)+3)%FACTS.length];
- s.push('<h2>'+f2[0]+'</h2><p>'+f2[1]+'</p>');
- s.push('<h2>Klašu konkurss</h2><p>Nofotografē savas klases dekorētās durvis un nosūti skolotājai. Balsojums notiks pēdējā nedēļā.</p>');
  return s;
+}
+function loadWx(){
+ var u="https://api.open-meteo.com/v1/forecast?latitude="+CITY.lat+"&longitude="+CITY.lon+"&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&wind_speed_unit=ms&timezone=Europe%2FRiga&forecast_days=2";
+ try{fetch(u).then(function(r){return r.json()}).then(function(j){var d=j.daily;WX={c:d.weather_code[1],hi:d.temperature_2m_max[1],lo:d.temperature_2m_min[1],p:d.precipitation_sum[1],w:d.wind_speed_10m_max[1]};mount()}).catch(function(){})}catch(e){}
 }
 
 var idx=0, els=[];
@@ -213,7 +369,7 @@ function branch(){
  [[326,86],[333,91],[321,92],[330,98],[338,84]].forEach(function(b){o+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="3.4" fill="#c8453b"/><circle cx="'+(b[0]-1)+'" cy="'+(b[1]-1)+'" r="1" fill="#fff" opacity=".5"/>'});
  document.getElementById("branch").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+o+'</svg>';
 }
-draw();mount();bar();branch();initSnow();
+draw();mount();bar();branch();initSnow();loadWx();
 if(!matchMedia("(prefers-reduced-motion: reduce)").matches) snow();
 setInterval(next,SLIDE_SECONDS*1000);
 setInterval(function(){draw();bar();},60000);
